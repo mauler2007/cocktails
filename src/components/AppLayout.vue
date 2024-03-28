@@ -1,8 +1,17 @@
 <script setup>
+import { Back } from "@element-plus/icons-vue";
 const props = defineProps({
   imgUrl: {
     type: String,
     required: true,
+  },
+  backFunc: {
+    type: Function,
+    required: true,
+  },
+  isBackButtonVisible: {
+    type: Boolean,
+    default: true,
   },
 });
 </script>
@@ -16,7 +25,17 @@ const props = defineProps({
       alt=""
     />
     <div class="main">
-      <el-button class="btn">Get random cocktail</el-button>
+      <div class="btns">
+        <el-button
+          v-if="isBackButtonVisible"
+          class="back"
+          type="primary"
+          circle
+          :icon="Back"
+          @click="backFunc"
+        ></el-button>
+        <el-button class="btn">Get random cocktail</el-button>
+      </div>
       <slot></slot>
     </div>
   </div>
@@ -51,4 +70,16 @@ const props = defineProps({
     &:active
         background-color: darken($accent, 10%)
         color: darken($accent, 10%)
+
+.btns
+  display: flex
+  justify-content: space-between
+  align-items: center
+
+
+.back
+  background-color: transparent
+  border-color: white
+  &:hover
+    background-color: $accent
 </style>

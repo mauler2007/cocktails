@@ -9,6 +9,7 @@ export const useRootStore = defineStore("root", {
     // Стан кореневого стору, що містить інгредієнти.
     ingredients: [],
     cocktails: [],
+    ingredient: null,
   }),
   actions: {
     // отримання інгредієнтів з сервера.
@@ -21,6 +22,10 @@ export const useRootStore = defineStore("root", {
       const data = await axios.get(`${COCKTAILS_BY_INGR_URL}${ingredient}`);
       this.cocktails = data?.data?.drinks;
       // console.log("Cocktail:", this.cocktail);
+    },
+
+    setIgredient(val) {
+      this.ingredient = val;
     },
   },
 });

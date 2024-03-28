@@ -1,5 +1,4 @@
 <script setup>
-import { ref } from "vue";
 import AppLayout from "../components/AppLayout.vue";
 import CocktailThumb from "../components/CocktailThumb.vue";
 import { useRootStore } from "@/stores/root"; // використовую його для отримання доступу до функцій та стану вашого стору.
@@ -7,16 +6,23 @@ import { storeToRefs } from "pinia"; // дозволяє конвертуват�
 
 const rootStore = useRootStore(); // створено екземпляр кореневого стору за допомогою useRootStore.
 rootStore.getIngredients(); // отримую дані про інгредієнти з сервера.
-const ingredient = ref(null); //створюю реактивну змінну за замовчуванням null
-const { ingredients, cocktails } = storeToRefs(rootStore); //використовую, storeToRefs, щоб конвертувати ingredients i coctails з  стору у реактивну змінну Vue.
+const { ingredients, cocktails, ingredient } = storeToRefs(rootStore); //використовую, storeToRefs, щоб конвертувати ingredients i coctails з  стору у реактивну змінну Vue.
 
 function getCocktails() {
-  rootStore.getCocktails(ingredient.value);
+  rootStore.getCocktails(rootStore.ingredient);
+}
+
+function removeIngredient() {
+  rootStore.setIgredient(null);
 }
 </script>
 
 <template>
-  <AppLayout img-url="/src/assets/img/bg-1.jpg">
+  <AppLayout
+    img-url="/src/assets/img/bg-1.jpg"
+    :back-func="removeIngredient"
+    :is-back-button-visible="!!ingredient"
+  >
     <div class="wrapper">
       <div v-if="!ingredient || !cocktails" class="info">
         <h1 class="title">Choose your drink</h1>
@@ -24,9 +30,11 @@ function getCocktails() {
         <div class="select-wrapper">
           <!--  v-model="ingredient" для зв'язку вибраного інгредієнту з реактивною змінною ingredient.  -->
           <el-select
-            v-model="ingredient"
+            v-model="rootStore.ingredient"
             placeholder="Choose main ingredient"
             size="large"
+            filterable
+            allow-create
             class="select"
             @change="getCocktails"
           >
@@ -62,14 +70,6 @@ function getCocktails() {
 
 <style lang="sass" scoped>
 @import '../assets/styles/main'
-.wrapper
-    display: flex
-    align-items: center
-    justify-content: center
-
-.info
-    padding: 80px 0
-    text-align: center
 
 .select-wrapper
     padding-top: 50px
@@ -91,7 +91,6 @@ function getCocktails() {
 .cocktails
   display: flex
   flex-wrap: wrap
-  justify-content: space-between
   align-items: center
   max-height: 400px
   margin-top: 60px
